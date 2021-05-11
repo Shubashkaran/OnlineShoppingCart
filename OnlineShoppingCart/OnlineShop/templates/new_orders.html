@@ -1,0 +1,81 @@
+<html>
+<head>
+  <link rel="stylesheet" href="{{url_for('static', filename='main.css')}}">
+  <link href="https://fonts.googleapis.com/css?family=Acme|K2D" rel="stylesheet">
+  <link rel='icon' href="{{url_for('static', filename='logo.png')}}">
+</head>
+<body>
+  <div class="sticky" style="padding-bottom:10px;background-color:#202020;">
+    <img src="{{url_for('static',filename='logo1.png')}}" width="230px" style="margin-left:7px;"><br><br>
+  </div>
+  <div class="nav">
+    <br><p><a href="/">Home</a> > <a href="/sell">Sell</a> > <a href="">New Orders</a></p>
+  </div>
+  <h2>New Orders</h2>
+  {% if orders|length==0 %}
+  <p>You have new orders right now.</p>
+  {% else %}
+  <table>
+    <tr>
+      <th>SNO.</th><th>PRODUCT</th><th>QTY. REQ</th>
+      <th>QTY. AVAIL</th><th>COST</th><th>DATE-TIME</th><th>STATUS</th><th></th><th></th>
+    </tr>
+    {% set cnt={'val':1} %}
+    {% for i in orders %}
+    <tr>
+      <td>{{cnt['val']}}</td><td><a href="/viewproduct/{{i[1]}}">{{i[2]}}</a></td><td>{{i[3]}}</td><td>{{i[4]}}</td>
+      <td>₹ {{i[5]}}</td><td>{{i[6]}}</td>
+     <td>{{i[7]}}</td>
+      {% if i[7]=="PLACED" %}
+      {% if i[3]<=i[4] %}
+      <td><p class="press"><a href="/dispatch/{{i[0]}}">Dispatch Order</a></p></td>
+      {% else %}
+      <td>Insufficient Stock</td>
+      {% endif %}
+      <td><p class="press"><a href="/cancel/{{i[0]}}">Cancel Order</a></p></td>
+      {% else %}
+      <td></td><td></td>
+      {% endif %}
+    </tr>
+    {%if cnt.update({'val':(cnt['val']+1)}) %}{% endif %}
+    <tr>
+      <td colspan=10>
+    <div id="my_box">
+        <h3><u>Payment Details:</u></h3>
+        <table>
+            <tr>
+                <td>Payment Method Used</td> <td width=50%>{{i[8]}}</td>
+            </tr>
+            <tr>
+                <td>Payment Status</td> <td>{{i[9]}}</td>
+            </tr>
+            {% if i[8]=="NET BANKING"%}
+            <tr>
+                <td>Card Name</td> <td>{{i[10]}}</td>
+            </tr>
+            <tr>
+                <td>Card Number</td> <td>{{i[11]}}</td>
+            </tr>
+            <tr>
+                <td>Expiry Month</td> <td>{{i[12]}}</td>
+            </tr>
+            <tr>
+                <td>Expiry Year</td> <td>{{i[13]}}</td>
+            </tr>
+            <tr>
+                <td>CVV</td> <td>{{i[14]}}</td>
+            </tr>
+            {% endif %}
+        </table>
+    </div>
+  </td>
+    </tr>
+      <tr bgcolor="transparent">
+          <td colspan="10" style="border-color:transparent;opacity:0;">
+          </td>
+      </tr>
+    {% endfor %}
+  </table>
+  {% endif %}
+</body>
+</html>
